@@ -14,18 +14,18 @@ namespace MailSeekerBot
 {
     public class MailSeekerBot : IBot
     {
-        private readonly LuisRecognizer _luisRecognizer;
         private readonly MailSeekerBotAccessors _stateAccessors;
         private readonly DialogSet _dialogs;
+        private readonly LuisRecognizer _luisRecognizer;
 
         public MailSeekerBot(MailSeekerBotAccessors accessors, LuisRecognizer luisRecognizer)
         {
             _stateAccessors = accessors ?? throw new ArgumentNullException(nameof(accessors));
-            _luisRecognizer = luisRecognizer ?? throw new ArgumentNullException(nameof(luisRecognizer));
+            _luisRecognizer = luisRecognizer;
 
             _dialogs = new DialogSet(_stateAccessors.ConversationDialogState);
             _dialogs.Add(OAuthHelpers.Prompt(accessors.OAuthConnectionName));
-            _dialogs.Add(new WaterfallDialog("graphDialog", new WaterfallStep[] { PromptStepAsync, ProcessStepAsync }));
+            _dialogs.Add(new WaterfallDialog("luisDialog", new WaterfallStep[] { PromptStepAsync, ProcessStepAsync }));
         }
 
         public async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
@@ -45,7 +45,7 @@ namespace MailSeekerBot
                     var dialogContext = await _dialogs.CreateContextAsync(turnContext, cancellationToken);
                     await dialogContext.ContinueDialogAsync(cancellationToken);
                     if (!turnContext.Responded)
-                        await dialogContext.BeginDialogAsync("graphDialog", cancellationToken: cancellationToken);
+                        await dialogContext.BeginDialogAsync("luisDialog", cancellationToken: cancellationToken);
                     break;
                 case ActivityTypes.ConversationUpdate:
                     // saludamos cuando un usuario entra
@@ -77,7 +77,7 @@ namespace MailSeekerBot
                 default:
                     await dialogContext.ContinueDialogAsync(cancellationToken);
                     if (!turnContext.Responded)
-                        await dialogContext.BeginDialogAsync("graphDialog", cancellationToken: cancellationToken);
+                        await dialogContext.BeginDialogAsync("luisDialog", cancellationToken: cancellationToken);
                     break;
             }
 

@@ -22,7 +22,7 @@ namespace MailSeekerBot
 
             await turnContext.SendActivityAsync("Dame un momento, estoy buscando...");
             // solo para depurar y validar el entrenamiento de LUIS
-            await turnContext.SendActivityAsync($"From ({mailFilter.From}) - Subject ({mailFilter.Subject}) - Count ({mailFilter.Count})");
+            //await turnContext.SendActivityAsync($"From ({mailFilter.From}) - Subject ({mailFilter.Subject}) - Count ({mailFilter.Count})");
 
 
             var client = new GraphClient(tokenResponse.Token);

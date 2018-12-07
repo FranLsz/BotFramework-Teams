@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -79,19 +80,27 @@ namespace MailSeekerBot
             // Configuramos y añadimos el singleton de LUIS para que sea accesible por el bot
             services.AddSingleton<LuisRecognizer>(sp =>
             {
-                // Credenciales de Luis
-                var luisApp = new LuisApplication(
-                    applicationId: Configuration.GetSection("luisApplicationId")?.Value,
-                    endpointKey: Configuration.GetSection("luisEndpointKey")?.Value,
-                    endpoint: Configuration.GetSection("luisEndpoint")?.Value);
-
-                // Opciones
-                var luisPredictionOptions = new LuisPredictionOptions
+                try
                 {
-                    IncludeAllIntents = true,
-                };
+                    // Credenciales de Luis
+                    var luisApp = new LuisApplication(
+                        applicationId: Configuration.GetSection("luisApplicationId")?.Value,
+                        endpointKey: Configuration.GetSection("luisEndpointKey")?.Value,
+                        endpoint: Configuration.GetSection("luisEndpoint")?.Value);
 
-                return new LuisRecognizer(luisApp, luisPredictionOptions, true);
+                    // Opciones
+                    var luisPredictionOptions = new LuisPredictionOptions
+                    {
+                        IncludeAllIntents = true,
+                    };
+
+                    return new LuisRecognizer(luisApp, luisPredictionOptions, true);
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    return null;
+                }
             });
 
             // Configuramos y añadimos el singleton del Accessor de nuestro Bot

@@ -8,7 +8,7 @@ namespace MailSeekerBot
     {
         public MailSeekerBotAccessors(string oAuthConnectionName, ConversationState conversationState, UserState userState)
         {
-            OAuthConnectionName = oAuthConnectionName ?? throw new ArgumentNullException(nameof(oAuthConnectionName));
+            OAuthConnectionName = oAuthConnectionName;
             UserState = userState ?? throw new ArgumentNullException(nameof(userState));
             ConversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
         }
